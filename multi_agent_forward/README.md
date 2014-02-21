@@ -37,7 +37,7 @@ bundle
 bundle exec fluentd -c agent.conf
 ```
 
-This takes time to run 30 agent processes, which reads logs from the same file /var/log/dummy.log.
+This runs 30 agent processes, which reads logs from the same file /var/log/dummy.log.
 
 ## Run benchmark tool and measure
 
@@ -73,7 +73,7 @@ This is a sample result running on my environement
 Machine Spec
 
 ```
-CPU Xeon E5-2670 2.60GHz x 2 (30 Cores)
+CPU Xeon E5-2670 2.60GHz x 2 (32 Cores)
 Memory  24G
 Disk    300G(10000rpm) x 2 [SAS-HDD]
 OS CentOS release 6.2 (Final)

@@ -26,7 +26,7 @@ bundle
 bundle exec fluentd -c receiver.conf
 ```
 
-This takes time to run 30 agent processes.
+This runs 30 receiver processes.
 
 ## Setup Fluentd Agent
 
@@ -75,7 +75,7 @@ This is a sample result running on my environement
 Machine Spec
 
 ```
-CPU Xeon E5-2670 2.60GHz x 2 (30 Cores)
+CPU Xeon E5-2670 2.60GHz x 2 (32 Cores)
 Memory  24G
 Disk    300G(10000rpm) x 2 [SAS-HDD]
 OS CentOS release 6.2 (Final)
