@@ -89,4 +89,6 @@ Result
 | 400000                      | N/A                   |         |             |         |
 | 5247047                     | N/A                   |         |             | MAX of dummer tool        |
 
-Does not change with `one_forward` scenario, but keepalive effectively works if you set smaller `buffer_chunk_limit` like 100k. 
+Does not change with [one_forward](../out_foward) scenario. 
+
+Keepalive effectively worked only when I set smaller `buffer_chunk_limit` like 100k although I do not put sample results here. 
