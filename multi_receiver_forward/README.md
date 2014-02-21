@@ -1,17 +1,17 @@
-# Fluentd benchmark - multi agent forward
+# Fluentd benchmark - multi receiver forward
 
 This benchmarks following architecture scenario:
 
-() denotes the number of processes
+() denotes the number of processes. [] denotes the number of threads.
 
 ```
   Agent Node                                          Receiver Node
-  +----------------------------------------+          +--------------------+
-  | +-----------+      +----------------+  |          |  +--------------+  |
-  | |           |      |                |  |          |  |              |  |
-  | | Log File  +----->|  Fluentd (30)  +--------------->|  Fluentd (1) |  |
-  | |           |      |                |  |          |  |              |  |
-  | +-----------+  in_tail ---------- out_forward   in_forward  --------+  |
+  +----------------------------------------+          +---------------------+
+  | +-----------+      +----------------+  |          |  +---------------+  |
+  | |           |      |                |  |          |  |               |  |
+  | | Log File  +----->|  Fluentd [30]  +--------------->|  Fluentd (30) |  |
+  | |           |      |                |  |          |  |               |  |
+  | +-----------+  in_tail ---------- out_forward   in_forward  ---------+  |
   +----------------------------------------+          +---------------------+
 ```
 
@@ -21,10 +21,12 @@ Assum ruby is installed
 
 ```
 git clone https://github.com/sonots/fluentd-benchmark
-cd fluentd-benchmark/multi_agent_forward
+cd fluentd-benchmark/multi_receiver_forward
 bundle
 bundle exec fluentd -c receiver.conf
 ```
+
+This takes time to run 30 agent processes.
 
 ## Setup Fluentd Agent
 
@@ -32,12 +34,12 @@ Assume ruby is installed
 
 ```
 git clone https://github.com/sonots/fluentd-benchmark
-cd fluentd-benchmark/multi_agent_forward
+cd fluentd-benchmark/multi_receiver_forward
 bundle
 bundle exec fluentd -c agent.conf
 ```
 
-This takes time to run 30 agent processes, which reads logs from the same file /var/log/dummy.log.
+This runs one process, but 30 threads of out_forward.
 
 ## Run benchmark tool and measure
 
@@ -46,7 +48,7 @@ Run at Fluentd agent server.
 This tool generates a log file to /var/log/dummy.log and Fluentd agent will read and send data to receiver. 
 
 ```
-cd fluentd-benchmark/multi_agent_forward
+cd fluentd-benchmark/multi_receiver_forward
 bundle exec dummer -c dummer.conf
 ```
 
@@ -56,12 +58,12 @@ You may increase the rate (messages/sec) of generating log by -r option to bench
 bundle exec dummer -c dummer.conf -r 1000
 ```
 
-You should see an output on Fluentd receiver as following. This will tell you the performance of fluentd processing. 
+You should see an output on Fluentd **agent** as following. This will tell you the performance of fluentd processing. 
 
 ```
-2014-02-20 17:20:55 +0900 [info]: plugin:out_flowcounter_simple count:30000       indicator:num   unit:second
-2014-02-20 17:20:55 +0900 [info]: plugin:out_flowcounter_simple count:30000       indicator:num   unit:second
-2014-02-20 17:20:55 +0900 [info]: plugin:out_flowcounter_simple count:30000       indicator:num   unit:second
+2014-02-20 17:20:55 +0900 [info]: plugin:out_flowcounter_simple count:1000       indicator:num   unit:second
+2014-02-20 17:20:55 +0900 [info]: plugin:out_flowcounter_simple count:1000       indicator:num   unit:second
+2014-02-20 17:20:55 +0900 [info]: plugin:out_flowcounter_simple count:1000       indicator:num   unit:second
 ```
 
 You may use `iostat -dkxt 1`, `vmstat 1`, `top -c`, `free`, or `dstat` commands to measure system resources. 
@@ -85,11 +87,12 @@ Result
 |-----------------------------|-------------------------|---------|-------------|----------|-------------|-----------------------|
 | rate of writing (lines/sec) | receiving (lines / sec) | CPU (%) | Memory (kB) | CPU (%)  | Memory (kB) | Remarks               |
 |-----------------------------|-------------------------|---------|-------------|----------|-------------|-----------------------|
-| 10                          | 300                     |         |             |          |             |                       |
-| 100                         | 3000                    |         |             |          |             |                       |
-| 1000                        | 30000                   |         |             |          |             |                       |
-| 10000                       | 467393                  |         |             | 100%     | 3435976     | CPU bound at receiver |
-| 100000                      | N/A                     |         |             |          |             |                       |
+| 10                          | 10                      |         |             |          |             |                       |
+| 100                         | 100                     |         |             |          |             |                       |
+| 1000                        | 1000                    |         |             |          |             |                       |
+| 10000                       | 10000                   |         |             |          |             |                       |
+| 100000                      | 87192                   | 100.4   | 51372       |          |             | CPU bound at agent    |
 | 150000                      | N/A                     |         |             |          |             |                       |
 | 200000                      | N/A                     |         |             |          |             |                       |
 
+Worse than one thread sender. 
