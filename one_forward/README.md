@@ -66,6 +66,19 @@ You may use `iostat -dkxt 1`, `vmstat 1`, `top -c`, `free`, or `dstat` commands 
 
 This is a sample result running on my environement
 
+
+Machine Spec
+
+```
+CPU	Xeon E5-2670 2.60GHz x 2 (32 Cores)
+Memory	24G
+Disk	300G(10000rpm) x 2 [SAS-HDD]
+OS CentOS release 6.2 (Final)
+```
+
+Result
+
+
 | rate of writing (lines/sec) | reading (lines/sec)   | CPU (%) | Memory (kB) | Remarks |
 |-----------------------------|-----------------------|---------|-------------|---------|
 | 10                          | 10                    | 0.2     | 29304       |         |
