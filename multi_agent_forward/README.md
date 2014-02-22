@@ -37,13 +37,13 @@ bundle
 bundle exec fluentd -c agent.conf
 ```
 
-This runs 30 agent processes, which reads logs from the same file /var/log/dummy.log.
+This runs 30 agent processes, which reads logs from the same file dummy.log.
 
 ## Run benchmark tool and measure
 
 Run at Fluentd agent server. 
 
-This tool generates a log file to /var/log/dummy.log and Fluentd agent will read and send data to receiver. 
+This tool generates a log file to dummy.log and Fluentd agent will read and send data to receiver. 
 
 ```
 cd fluentd-benchmark/multi_agent_forward

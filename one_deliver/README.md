@@ -59,7 +59,7 @@ This runs 15 processes.
 
 Run at Fluentd agent server. 
 
-This tool generates a log file to /var/log/dummy.log and Fluentd agent will read and send data to receiver. 
+This tool generates a log file to dummy.log and Fluentd agent will read and send data to receiver. 
 
 ```
 cd fluentd-benchmark/one_deliver
