@@ -1,5 +1,7 @@
 # Fluentd benchmark - multi receiver forward
 
+This scenario would show the maximum performance of out_forward.
+
 This benchmarks following architecture scenario:
 
 () denotes the number of processes. [] denotes the number of threads.
@@ -94,4 +96,6 @@ Result
 | 150000                      | N/A                     |         |             |          |             |                       |
 | 200000                      | N/A                     |         |             |          |             |                       |
 
-Worse than one thread sender. 
+This result was worse than [one_forward](../one_forward), which sent 157148 lines / sec at maximum per process. 
+So, [one_forward](../one_forward) showed the maximum performance of out_forward (but, it was bounded by receiver process, so...).
+

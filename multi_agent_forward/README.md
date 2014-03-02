@@ -1,5 +1,7 @@
 # Fluentd benchmark - multi agent forward
 
+The scenario shows the maximum performance of in_forward. 
+
 This benchmarks following architecture scenario:
 
 () denotes the number of processes
