@@ -23,7 +23,7 @@ Assum ruby is installed
 
 ```
 git clone https://github.com/sonots/fluentd-benchmark
-cd fluentd-benchmark/multi_receiver_forward
+cd fluentd-benchmark/out_forward
 bundle
 bundle exec fluentd -c receiver.conf
 ```
@@ -36,7 +36,7 @@ Assume ruby is installed
 
 ```
 git clone https://github.com/sonots/fluentd-benchmark
-cd fluentd-benchmark/multi_receiver_forward
+cd fluentd-benchmark/out_forward
 bundle
 bundle exec fluentd -c agent.conf
 ```
@@ -50,7 +50,7 @@ Run at Fluentd agent server.
 This tool generates a log file to dummy.log and Fluentd agent will read and send data to receiver. 
 
 ```
-cd fluentd-benchmark/multi_receiver_forward
+cd fluentd-benchmark/out_forward
 bundle exec dummer -c dummer.conf
 ```
 
