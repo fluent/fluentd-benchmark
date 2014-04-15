@@ -2,4 +2,5 @@ source 'https://rubygems.org'
 
 gem 'fluentd'
 gem 'dummer'
+gem 'cool.io', git: 'https://github.com/sonots/cool.io', branch: 'run_once_timeout'
 gem 'fluent-plugin-flowcounter-simple'
