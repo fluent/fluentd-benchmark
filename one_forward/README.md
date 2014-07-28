@@ -79,8 +79,9 @@ OS CentOS release 6.2 (Final)
 Result
 
 
-| rate of writing (lines/sec) | reading (lines/sec)   | CPU (%) | Memory (kB) | Remarks |
+|                             |                       | Agent   |             |         |
 |-----------------------------|-----------------------|---------|-------------|---------|
+| rate of writing (lines/sec) | reading (lines/sec)   | CPU (%) | Memory (kB) | Remarks |
 | 10                          | 10                    | 0.2     | 29304       |         |
 | 100                         | 100                   | 0.3     | 35812       |         |
 | 1000                        | 1000                  | 1.3     | 37864       |         |
