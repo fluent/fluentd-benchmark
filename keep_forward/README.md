@@ -15,10 +15,10 @@ This benchmarks following architecture scenario:
 
 ## Setup Fluentd Receiver
 
-Assum ruby is installed
+Assume ruby is installed
 
 ```
-git clone https://github.com/sonots/fluentd-benchmark
+git clone https://github.com/fluent/fluentd-benchmark
 cd fluentd-benchmark/keep_forward
 bundle
 bundle exec fluentd -c receiver.conf
@@ -29,7 +29,7 @@ bundle exec fluentd -c receiver.conf
 Assume ruby is installed
 
 ```
-git clone https://github.com/sonots/fluentd-benchmark
+git clone https://github.com/fluent/fluentd-benchmark
 cd fluentd-benchmark/keep_forward
 bundle
 bundle exec fluentd -c agent.conf
@@ -39,20 +39,20 @@ bundle exec fluentd -c agent.conf
 
 Run at Fluentd agent server. 
 
-This tool generates a log file to dummy.log and Fluentd agent will read and send data to receiver. 
+This tool outputs logs to `dummy.log`, and Fluentd agent reads it and sends data to a receiver. 
 
 ```
 cd fluentd-benchmark/keep_forward
 bundle exec dummer -c dummer.conf
 ```
 
-You may increase the rate (messages/sec) of generating log by -r option to benchmark. 
+You may increase the rate (messages/sec) of log generation by -r option to benchmark. 
 
 ```
 bundle exec dummer -c dummer.conf -r 1000
 ```
 
-You should see an output on Fluentd receiver as following. This will tell you the performance of fluentd processing. 
+You should see an output on Fluentd receiver as followings. This tells you the performance of fluentd processing. 
 
 ```
 2014-02-20 17:20:55 +0900 [info]: plugin:out_flowcounter_simple count:1000       indicator:num   unit:second
