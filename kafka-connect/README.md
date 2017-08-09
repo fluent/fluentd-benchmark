@@ -1,0 +1,92 @@
+# Fluentd benchmark - kafka-connect-fluentd ()
+
+This benchmarks following architecture scenario:
+
+```
+ Agent Node                                     Apache Kafka
+  +-----------------------------------+          +--------------------------------+
+  | +-----------+      +-----------+  |          |  +-------------------------+   |
+  | |           |      |           |  |          |  |                         |   |
+  | | Log File  +----->|  Fluentd  +--------------->|  Source                 |   |
+  | |           |      |           |  |          |  | (FluentdSourceConnector)|   |
+  | +-----------+  in_tail ----- out_forward     |  +-------------------------+   |
+  +-----------------------------------+          +--------------------------------+
+```
+
+We can increase Agent Node to send a lot of messages to Apache Kafka.
+
+## Setup Fluentd
+
+Assume ruby is installed
+
+```
+git clone https://github.com/fluent/fluentd-benchmark
+cd fluentd-benchmark/kafka-connect
+bundle
+bundle exec fluentd -c agent.conf
+```
+
+## Setup Kafka
+
+**NOTE:** Assume java and kafka tarball is installed.
+
+Run zookeeper:
+
+```
+cd KAFKA_ROOT
+bin/zookeeper-server-start.sh config/zookeeper.properties
+```
+
+Run kafka server:
+
+```
+cd KAFKA_ROOT
+bin/kafka-server-start.sh config/server.properties
+```
+
+Run FluentdSourceConnector:
+
+```
+env KAFKA_HEAP_OPTS=-Xmx4096M bin/connect-standalone.sh config/connect-standalone.properties FluentdSourceConnector.properties
+```
+
+**NOTE** You can set `KAFKA_HEAP_OPTS=-Xmx4096M` to avoid JVM OOM.
+
+## Run benchmark tool and measure
+
+Run at Fluentd agent server.
+
+This tool outputs logs to `dummy.log`, and Fluentd agent reads it and sends data to a receiver.
+
+```
+cd fluentd-benchmark/out_kafka
+bundle exec dummer -c dummer.conf
+```
+
+You may increase the rate (messages/sec) of log generation by -r option to benchmark.
+
+```
+bundle exec dummer -c dummer.conf -r 100000
+```
+
+You should see an output on FluentdSourceConnector as followings. This tells you the performance of FluentdSourceConnector processing.
+
+```
+[2017-08-09 11:19:27,150] INFO 500 requests/sec (org.fluentd.kafka.FluentdSourceTask:45)
+[2017-08-09 11:19:28,154] INFO 500 requests/sec (org.fluentd.kafka.FluentdSourceTask:45)
+[2017-08-09 11:19:29,155] INFO 500 requests/sec (org.fluentd.kafka.FluentdSourceTask:45)
+```
+
+You should see an output on Fluentd receiver as followings. This tells you the performance of fluentd processing.
+
+```
+2014-02-20 17:20:55 +0900 [info]: plugin:out_flowcounter_simple count:500       indicator:num   unit:second
+2014-02-20 17:20:56 +0900 [info]: plugin:out_flowcounter_simple count:500       indicator:num   unit:second
+2014-02-20 17:20:57 +0900 [info]: plugin:out_flowcounter_simple count:500       indicator:num   unit:second
+```
+
+You may use `iostat -dkxt 1`, `vmstat 1`, `top -c`, `free`, or `dstat` commands to measure system resources.
+
+## Sample Result
+
+TODO
