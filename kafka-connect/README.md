@@ -93,4 +93,17 @@ TODO: write about key generation
 
 ## Sample Result
 
-TODO
+|                             | Total   |             |                                |
+|-----------------------------|---------|-------------|--------------------------------|
+| rate of writing (lines/sec) | CPU (%) | Memory (kB) | Remarks                        |
+| 10                          | 14.3    |             |                                |
+| 100                         | 15.5    |             |                                |
+| 1000                        | 14.7    |             |                                |
+| 10000                       | 17.7    |             |                                |
+| 100000                      | 30.4    |             |                                |
+| 150000                      | 40.2    |             |                                |
+| 250000                      | 48.7    |             | one in_tail reading threashold |
+| 300000                      | N/A     |             |                                |
+| 400000                      | N/A     |             |                                |
+| 500000                      | N/A     |             |                                |
+| 5247047                     |         |             | MAX of dummer tool             |
