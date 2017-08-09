@@ -87,6 +87,10 @@ You should see an output on Fluentd receiver as followings. This tells you the p
 
 You may use `iostat -dkxt 1`, `vmstat 1`, `top -c`, `free`, or `dstat` commands to measure system resources.
 
+## SSL/TLS
+
+TODO: write about key generation
+
 ## Sample Result
 
 TODO
