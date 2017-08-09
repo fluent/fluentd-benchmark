@@ -102,6 +102,8 @@ Disk	Crucial　CT1050MX300SSD4 1TB SSD
 OS Debian Stretch 9.1 amd64
 ```
 
+Without TLS
+
 |                             | Total   |             |                                |
 |-----------------------------|---------|-------------|--------------------------------|
 | rate of writing (lines/sec) | CPU (%) | Memory (kB) | Remarks                        |
@@ -114,5 +116,39 @@ OS Debian Stretch 9.1 amd64
 | 250000                      | 48.7    |             | one in_tail reading threashold |
 | 300000                      | N/A     |             |                                |
 | 400000                      | N/A     |             |                                |
+| 500000                      | N/A     |             |                                |
+| 5247047                     |         |             | MAX of dummer tool             |
+
+With TLS and `KAFKA_HEAP_OPTS="-Xmx4096M -Xms4096M`"
+
+|                             | Total   |             |                                |
+|-----------------------------|---------|-------------|--------------------------------|
+| rate of writing (lines/sec) | CPU (%) | Memory (kB) | Remarks                        |
+| 10                          | 15.4    |             |                                |
+| 100                         | 16.8    |             |                                |
+| 1000                        | 15.6    |             |                                |
+| 10000                       | 92.1    |             | JVM heap shortage?             |
+| 100000                      | 91.8    |             |                                |
+| 150000                      | N/A     |             |                                |
+| 250000                      | N/A     |             |                                |
+| 300000                      | N/A     |             |                                |
+| 400000                      | N/A     |             |                                |
+| 500000                      | N/A     |             |                                |
+| 5247047                     |         |             | MAX of dummer tool             |
+
+With TLS and `KAFKA_HEAP_OPTS="-Xmx24G -Xms24G`"
+
+|                             | Total   |             |                                |
+|-----------------------------|---------|-------------|--------------------------------|
+| rate of writing (lines/sec) | CPU (%) | Memory (kB) | Remarks                        |
+| 10                          | 15.0    |             |                                |
+| 100                         | 15.3    |             |                                |
+| 1000                        | 17.8    |             |                                |
+| 10000                       | 38.0    |             |                                |
+| 100000                      | 46.9    |             | dummer I/O limit?              |
+| 150000                      | 45.0    |             |                                |
+| 250000                      | 47.4    |             |                                |
+| 300000                      | 47.9    |             |                                |
+| 400000                      | 49.8    |             |                                |
 | 500000                      | N/A     |             |                                |
 | 5247047                     |         |             | MAX of dummer tool             |
