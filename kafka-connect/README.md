@@ -50,7 +50,7 @@ Run FluentdSourceConnector:
 env KAFKA_HEAP_OPTS=-Xmx4096M bin/connect-standalone.sh config/connect-standalone.properties FluentdSourceConnector.properties
 ```
 
-**NOTE** You can set `KAFKA_HEAP_OPTS=-Xmx4096M` to avoid JVM OOM.
+**NOTE** You can set `KAFKA_HEAP_OPTS=-Xmx4096M -Xms4096M` to avoid JVM OOM.
 
 ## Run benchmark tool and measure
 
