@@ -93,6 +93,15 @@ TODO: write about key generation
 
 ## Sample Result
 
+Machine Spec
+
+```
+CPU	Intel(R) Core(TM) i7-6700 CPU @ 3.40GHz (4Cores 8Threads)
+Memory	64G
+Disk	Crucial　CT1050MX300SSD4 1TB SSD
+OS Debian Stretch 9.1 amd64
+```
+
 |                             | Total   |             |                                |
 |-----------------------------|---------|-------------|--------------------------------|
 | rate of writing (lines/sec) | CPU (%) | Memory (kB) | Remarks                        |
