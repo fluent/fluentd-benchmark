@@ -77,7 +77,7 @@ You may use `iostat -dkxt 1`, `vmstat 1`, `top -c`, `free`, or `dstat` commands 
 
 ## Sample Result
 
-This is a sample result running on my environement
+This is a sample result running on my environment
 
 
 Machine Spec
