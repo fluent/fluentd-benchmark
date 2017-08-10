@@ -123,3 +123,18 @@ For out\_kafka\_buffered
 | 300000                      |         |             |                      |
 | 400000                      |         |             |                      |
 | 5247047                     |         |             | MAX of dummer tool   |
+
+For out_kafka2
+
+|                             | Total   |             |                                 |
+|-----------------------------|---------|-------------|---------------------------------|
+| rate of writing (lines/sec) | CPU (%) | Memory (kB) | Remarks                         |
+| 10                          | 4.3     |             |                                 |
+| 100                         | 5.8     |             |                                 |
+| 1000                        | 7.9     |             |                                 |
+| 10000                       | 10.6    |             |                                 |
+| 100000                      | 16.8    |             | MAX (Kafka::MessageSizeTooLarge)|
+| 200000                      | N/A     |             |                                 |
+| 300000                      |         |             |                                 |
+| 400000                      |         |             |                                 |
+| 5247047                     |         |             | MAX of dummer tool              |
