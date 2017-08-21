@@ -1,4 +1,4 @@
-# Fluentd benchmark - kafka-connect-fluentd ()
+# Fluentd benchmark - kafka-connect-fluentd (source)
 
 This benchmarks following architecture scenario:
 
@@ -89,7 +89,13 @@ You may use `iostat -dkxt 1`, `vmstat 1`, `top -c`, `free`, or `dstat` commands 
 
 ## SSL/TLS
 
-TODO: write about key generation
+Use following scripts.
+
+1. https://github.com/okumin/influent/blob/master/bin/generate-ca.sh
+1. https://github.com/okumin/influent/blob/master/bin/generate-server-keystore.sh
+
+generate-ca.sh uses openssl command to generate private key and certificate for Fluentd.
+generate-server-keystore.sh uses keytool and generate jks format keystore file for influent.
 
 ## Sample Result
 
@@ -152,3 +158,91 @@ With TLS and `KAFKA_HEAP_OPTS="-Xmx24G -Xms24G`"
 | 400000                      | 49.8    |             |                                |
 | 500000                      | N/A     |             |                                |
 | 5247047                     |         |             | MAX of dummer tool             |
+
+in\_tail + out\_forward can emit about 120k events/sec.
+We need more clients to emit 200k events/sec or more.
+
+Use following command to measure client CPU usage and memory usage.
+
+```
+pidstat -l -G "fluentd|dummer" -dur 1
+```
+
+Use following command to measure server CPU usage and memory usage.
+
+```
+pidstat -G "java" -dur 1
+```
+
+Client PCs:
+
+1st:
+
+```
+CPU: Intel(R) Core(TM) i7-4790K CPU @ 4.00GHz (4cores 8threads)
+Memory: 32GB
+Disk: HDD
+```
+
+2nd:
+
+```
+CPU: Intel(R) Core(TM) i7-7700T CPU @ 2.90GHz (4cores 8threads)
+Memory: 16GB
+Disk: SSD
+```
+
+3rd:
+
+```
+CPU: Intel(R) Core(TM) i7-3770 CPU @ 3.40GHz (4cores 8threads)
+Memory: 16GB
+Disk: HDD
+```
+
+### w/o TLS
+
+| rate of writing (lines/sec) | client processes | Client CPU (%) | Client Memory (KB) | Server CPU(%) | Server Memory (KB) | Remarks                                                    |
+|-----------------------------|------------------|----------------|--------------------|---------------|--------------------|------------------------------------------------------------|
+|                          10 |                1 |           0.51 |            2558052 |           100 |           30893472 |                                                            |
+|                         100 |                1 |           0.49 |            2558352 |           100 |           30962084 |                                                            |
+|                        1000 |                1 |           1.08 |            2558448 |           100 |           30962084 |                                                            |
+|                       10000 |                1 |           7.77 |            2565704 |           100 |           30962084 |                                                            |
+|                      100000 |                1 |          71.43 |            2576056 |           100 |           30962084 |                                                            |
+|                      200000 |                2 |         175.80 |            5161933 |           100 |           30962084 |                                                            |
+|                      300000 |                3 |         280.78 |            7774361 |           100 |           30962084 |                                                            |
+|                      400000 |                4 |            N/A |                N/A |           100 |           30962084 | 1st 300k lines/sec, 2nd 100k lines/sec                     |
+|                      500000 |                5 |            N/A |                N/A |           100 |           30962084 | 1st 300k lines/sec, 2nd 100k lines/sec, 3rd 100k lines/sec |
+
+NOTE:
+In case of 400k lines/sec and 500k lines/sec results are not accurate.
+Because we cannot send just 400k lines/sec and 500k lines/sec in order to client performance limitation.
+
+### w/o TLS maximum throughput
+
+NOTE: Fluency can send a lot of records. Limit against worker pool size
+
+| worker pool size | processing (records/sec) | Remarks               |
+|------------------|--------------------------|-----------------------|
+|                1 |                   534150 |                       |
+|                2 |                   803017 |                       |
+|                4 |                   916141 | overflow(client side) |
+|                8 |                  1135218 | maybe kafka limit     |
+
+Create large log file using dummer and read it from Java program and
+send it to kafka-connect-fluentd using Fluency.
+
+### w/ TLS
+
+| rate of writing (lines/sec) | client processes | Client CPU (%) | Client Memory (KB) | Server CPU(%) | Server Memory (KB) | Remarks                                                            |
+|-----------------------------|------------------|----------------|--------------------|---------------|--------------------|--------------------------------------------------------------------|
+|                          10 |                1 |           0.51 |            2558052 |           100 |           30899808 |                                                                    |
+|                         100 |                1 |           0.62 |            2558448 |           100 |           30966372 |                                                                    |
+|                        1000 |                1 |           1.33 |            2558408 |           100 |           30966372 |                                                                    |
+|                       10000 |                1 |           8.40 |            2565604 |           100 |           30966372 |                                                                    |
+|                      100000 |                1 |          75.64 |            2579636 |           100 |           30966372 |                                                                    |
+|                      200000 |                2 |         192.12 |            5162172 |           100 |           30968420 |                                                                    |
+|                      300000 |                3 |         262.65 |            7971965 |           100 |           30968420 | Buffer overflow(client). Server can process about 200k records/sec |
+|                      400000 |                  |                |                    |           N/A |                    | N/A                                                                |
+|                      500000 |                  |                |                    |           N/A |                    | N/A                                                                |
+
