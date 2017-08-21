@@ -24,7 +24,7 @@ done
 sleep 5
 
 date > log/start-${rate}.timestamp
-pidstat -l -G "fluentd|dummer" -dur 1 > log/pidstat-${rate}.log &
+pidstat -l -G "ruby|fluentd|dummer" -dur 1 > log/pidstat-${rate}.log &
 
 wait
 
