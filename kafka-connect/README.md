@@ -159,8 +159,7 @@ With TLS and `KAFKA_HEAP_OPTS="-Xmx24G -Xms24G`"
 | 500000                      | N/A     |             |                                |
 | 5247047                     |         |             | MAX of dummer tool             |
 
-in\_tail + out\_forward can emit about 120k events/sec.
-We need more clients to emit 200k events/sec or more.
+----
 
 Use following command to measure client CPU usage and memory usage.
 
@@ -202,13 +201,15 @@ Disk: HDD
 
 ### w/o TLS
 
+Using `KAFKA_HEAP_OPTS=-Xmx24G`.
+
 | rate of writing (lines/sec) | client processes | Client CPU (%) | Client Memory (KB) | Server CPU(%) | Server Memory (KB) | Remarks                                                    |
 |-----------------------------|------------------|----------------|--------------------|---------------|--------------------|------------------------------------------------------------|
-|                          10 |                1 |           0.51 |            2558052 |           100 |           30893472 |                                                            |
-|                         100 |                1 |           0.49 |            2558352 |           100 |           30962084 |                                                            |
-|                        1000 |                1 |           1.08 |            2558448 |           100 |           30962084 |                                                            |
-|                       10000 |                1 |           7.77 |            2565704 |           100 |           30962084 |                                                            |
-|                      100000 |                1 |          71.43 |            2576056 |           100 |           30962084 |                                                            |
+|                          10 |                1 |           0.51 |            2558052 |         < 1.0 |           30893472 |                                                            |
+|                         100 |                1 |           0.49 |            2558352 |           1.0 |           30962084 |                                                            |
+|                        1000 |                1 |           1.08 |            2558448 |           3.0 |           30962084 |                                                            |
+|                       10000 |                1 |           7.77 |            2565704 |           8.5 |           30962084 |                                                            |
+|                      100000 |                1 |          71.43 |            2576056 |          80.0 |           30962084 |                                                            |
 |                      200000 |                2 |         175.80 |            5161933 |           100 |           30962084 |                                                            |
 |                      300000 |                3 |         280.78 |            7774361 |           100 |           30962084 |                                                            |
 |                      400000 |                4 |            N/A |                N/A |           100 |           30962084 | 1st 300k lines/sec, 2nd 100k lines/sec                     |
@@ -219,6 +220,8 @@ In case of 400k lines/sec and 500k lines/sec results are not accurate.
 Because we cannot send just 400k lines/sec and 500k lines/sec in order to client performance limitation.
 
 ### w/o TLS maximum throughput
+
+Using `KAFKA_HEAP_OPTS=-Xmx24G`.
 
 NOTE: Fluency can send a lot of records. Limit against worker pool size
 
@@ -234,13 +237,15 @@ send it to kafka-connect-fluentd using Fluency.
 
 ### w/ TLS
 
+Using `KAFKA_HEAP_OPTS=-Xmx24G`.
+
 | rate of writing (lines/sec) | client processes | Client CPU (%) | Client Memory (KB) | Server CPU(%) | Server Memory (KB) | Remarks                                                            |
 |-----------------------------|------------------|----------------|--------------------|---------------|--------------------|--------------------------------------------------------------------|
-|                          10 |                1 |           0.51 |            2558052 |           100 |           30899808 |                                                                    |
-|                         100 |                1 |           0.62 |            2558448 |           100 |           30966372 |                                                                    |
-|                        1000 |                1 |           1.33 |            2558408 |           100 |           30966372 |                                                                    |
-|                       10000 |                1 |           8.40 |            2565604 |           100 |           30966372 |                                                                    |
-|                      100000 |                1 |          75.64 |            2579636 |           100 |           30966372 |                                                                    |
+|                          10 |                1 |           0.51 |            2558052 |          5.60 |           30899808 |                                                                    |
+|                         100 |                1 |           0.62 |            2558448 |          5.88 |           30966372 |                                                                    |
+|                        1000 |                1 |           1.33 |            2558408 |          7.39 |           30966372 |                                                                    |
+|                       10000 |                1 |           8.40 |            2565604 |         22.05 |           30966372 |                                                                    |
+|                      100000 |                1 |          75.64 |            2579636 |         97.03 |           30966372 |                                                                    |
 |                      200000 |                2 |         192.12 |            5162172 |           100 |           30968420 |                                                                    |
 |                      300000 |                3 |         262.65 |            7971965 |           100 |           30968420 | Buffer overflow(client). Server can process about 200k records/sec |
 |                      400000 |                  |                |                    |           N/A |                    | N/A                                                                |

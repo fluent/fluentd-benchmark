@@ -8,7 +8,7 @@ workers="$2"
 
 mkdir -p log
 
-trap "date >> log/start-${rate}.timestamp; pkill -f pidstat ;pkill -f dummer; pkill -f fluentd" INT
+trap "date --rfc-3339=seconds >> log/start-${rate}.timestamp; pkill -f pidstat ;pkill -f dummer; pkill -f fluentd" INT
 
 _rate=$(($rate / $workers))
 
@@ -23,7 +23,7 @@ done
 # wait for running all processes
 sleep 5
 
-date > log/start-${rate}.timestamp
+date --rfc-3339=seconds > log/start-${rate}.timestamp
 pidstat -l -G "ruby|fluentd|dummer" -dur 1 > log/pidstat-${rate}.log &
 
 wait
