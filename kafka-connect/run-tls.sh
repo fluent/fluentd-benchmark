@@ -7,7 +7,7 @@ mkdir -p log
 rate="$1"
 workers="$2"
 
-trap "date >> log/start-tls-${rate}.timestamp; pkill -f dummer; pkill -f fluentd" INT
+trap "date --rfc-3339=seconds >> log/start-tls-${rate}.timestamp; pkill -f dummer; pkill -f fluentd" INT
 
 _rate=$(($rate / $workers))
 
@@ -21,7 +21,7 @@ done
 
 sleep 5
 
-date > log/start-tls-${rate}.timestamp
+date --rfc-3339=seconds > log/start-tls-${rate}.timestamp
 pidstat -l -G "fluentd|dummer" -dur 1 > log/pidstat-${rate}.log &
 
 wait
