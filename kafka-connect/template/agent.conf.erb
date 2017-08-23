@@ -1,0 +1,36 @@
+<source>
+  @type tail
+  path dummy<%= n %>.log
+  pos_file /var/tmp/_var_log_dummy<%= n %>.pos
+  format none
+  tag dummy
+  read_from_head true
+</source>
+<match dummy>
+  @type copy
+  <store>
+    @type forward
+<%- if @tls -%>
+    transport tls
+    tls_cert_path keys/ca_cert.pem
+    tls_verify_hostname false # for test
+    heartbeat_type none
+<%- end -%>
+    <server>
+      host <%= @hostname %>
+      port 24224
+    </server>
+    <buffer>
+      # flush_interval 1
+      flush_interval 0
+      try_flush_interval 1
+      chunk_limit_size 1m
+      queue_limit_length 64
+      flush_thread_count 32
+      # phi_threshold 35
+    </buffer>
+  </store>
+  <store>
+    @type flowcounter_simple
+  </store>
+</match>
