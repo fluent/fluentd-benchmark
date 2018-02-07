@@ -1,0 +1,29 @@
+- name: Install packages
+  become: yes
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+  with_items:
+    - build-essential
+    - git
+    - ruby
+    - ruby-dev
+    - sysstat
+   
+- name: Install Bundler
+  become: yes
+  gem:
+    name: bundler
+    user_install: no
+
+- name: Install fluent-logger
+  become: yes
+  gem:
+    name: fluent-logger
+    user_install: no
+
+- name: Copy send-metrics.rb
+  copy:
+    src: send-metrics.rb
+    dest: ~/send-metrics.rb
+    mode: 0755

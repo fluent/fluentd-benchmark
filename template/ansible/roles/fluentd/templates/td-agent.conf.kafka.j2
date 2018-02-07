@@ -1,0 +1,11 @@
+<source>
+  @type forward
+  port 24224
+  bind 0.0.0.0
+</source>
+
+<match benchmark.data>
+  @type kafka
+  brokers kafka:9092
+  zookeeper kafka:2181
+</match>

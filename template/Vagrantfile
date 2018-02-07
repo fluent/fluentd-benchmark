@@ -1,0 +1,71 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  name1 = "fluentd-server"
+  config.vm.define(name1) do |node|
+    node.vm.box = "debian/stretch64"
+    node.vm.network "private_network", ip: "192.168.33.50"
+    node.vm.provider :virtualbox do |virtual_box|
+      virtual_box.memory = 2048
+    end
+    node.vm.provision :ansible do |ansible|
+      ansible.playbook = "ansible/playbook.yml"
+      ansible.groups = {
+        "fluentd" => [name1],
+      }
+      ansible.host_key_checking = false
+    end
+  end
+
+  name2 = "kafka-server"
+  config.vm.define(name2) do |node|
+    node.vm.box = "debian/stretch64"
+    node.vm.network "private_network", ip: "192.168.33.51"
+    node.vm.provider :virtualbox do |virtual_box|
+      virtual_box.memory = 2048
+    end
+    node.vm.provision :ansible do |ansible|
+      ansible.playbook = "ansible/playbook.yml"
+      ansible.groups = {
+        "kafka" => [name2],
+      }
+      ansible.host_key_checking = false
+    end
+  end
+
+  name3 = "kafka-metrics"
+  config.vm.define(name3) do |node|
+    node.vm.box = "debian/stretch64"
+    node.vm.network "private_network", ip: "192.168.33.52"
+    node.vm.provider :virtualbox do |virtual_box|
+      virtual_box.memory = 2048
+    end
+    node.vm.provision :ansible do |ansible|
+      ansible.playbook = "ansible/playbook.yml"
+      ansible.groups = {
+        "metrics" => [name3],
+      }
+      ansible.host_key_checking = false
+    end
+  end
+
+  name4 = "benchmark-client"
+  config.vm.define(name4) do |node|
+    node.vm.box = "debian/stretch64"
+    node.vm.network "private_network", ip: "192.168.33.53"
+    node.vm.provider :virtualbox do |virtual_box|
+      virtual_box.memory = 2048
+    end
+    node.vm.provision :ansible do |ansible|
+      ansible.playbook = "ansible/playbook.yml"
+      ansible.groups = {
+        "client" => [name4],
+      }
+      ansible.host_key_checking = false
+    end
+  end
+end

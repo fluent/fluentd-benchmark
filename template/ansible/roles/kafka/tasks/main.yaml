@@ -1,0 +1,75 @@
+---
+- name: Update APT mirror
+  become: yes
+  lineinfile:
+    path: /etc/apt/sources.list
+    regexp: '(deb(?:-src)? http://)deb\.debian\.org/debian/? stretch main'
+    line: '\1ftp.jp.debian.org/debian stretch main'
+    backrefs: yes
+
+- name: Install packages
+  become: yes
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+  with_items:
+    - apt-transport-https
+    - build-essential
+    - gzip
+    - unzip
+    - git
+    - openjdk-8-jdk
+    - openjdk-8-jre
+
+- name: Install Kafka
+  unarchive:
+    src: "http://ftp.jaist.ac.jp/pub/apache/kafka/{{ kafka_version }}/{{ kafka_base }}.tgz"
+    dest: ~/
+    remote_src: yes
+
+- name: Copy run.sh
+  copy:
+    src: run.sh
+    dest: "~/{{ kafka_base }}/run.sh"
+    mode: 0755
+
+- name: Clone kafka-fluent-metrics-reporter
+  git:
+    repo: https://github.com/okkez/kafka-fluent-metrics-reporter.git
+    dest: ~/kafka-fluent-metrics-reporter
+
+- name: Build kafka-fluent-metrics-reporter
+  shell: |
+    ./gradlew shadowJar
+    cp build/libs/kafka-fluent-metrics-reporter-1.0-SNAPSHOT-all.jar ~/{{ kafka_base }}/libs
+  args:
+    chdir: ~/kafka-fluent-metrics-reporter
+    creates: "~/{{ kafka_base }}/libs/kafka-fluent-metrics-reporter-1.0-SNAPSHOT-all.jar"
+
+- name: Clone kafka-connect-fluentd
+  git:
+    repo: https://github.com/fluent/kafka-connect-fluentd.git
+    dest: ~/kafka-connect-fluentd
+
+- name: Build kafka-connect-fluentd
+  shell: |
+    ./gradlew shadowJar
+    cp build/libs/kafka-connect-fluentd-0.0.2-SNAPSHOT-all.jar ~/{{ kafka_base }}/libs
+  args:
+    chdir: ~/kafka-connect-fluentd
+
+- name: Install FluentdSourceConnector.properties
+  copy:
+    src: FluentdSourceConnector.properties
+    dest: "~/{{ kafka_base }}/config/FluentdSourceConnector.properties"
+
+- name: Install server.properties
+  copy:
+    src: server.properties
+    dest: "~/{{ kafka_base }}/config/server.properties"
+
+# We should run Kafka server by hand.
+# - name: Run Kafka server
+#   command: ./run.sh
+#   args:
+#     chdir: ~/kafka

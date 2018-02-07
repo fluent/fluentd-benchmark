@@ -1,0 +1,36 @@
+<source>
+  @type forward
+  port 24224
+</source>
+
+<match kafka-metrics.**>
+  @type influxdb
+  host localhost
+  port 8086
+  dbname kafka-metrics
+  #measurement
+  user root
+  password root
+  auto_tags true
+  #tag_keys Name,MBeanName,Group,Scope,Type
+</match>
+
+<match fluentd-metrics>
+  @type influxdb
+  host localhost
+  port 8086
+  dbname fluentd
+  user root
+  password root
+  auto_tags true
+</match>
+
+<match kafka-connect-metrics>
+  @type influxdb
+  host localhost
+  port 8086
+  dbname kafka-connect
+  user root
+  password root
+  auto_tags true
+</match>

@@ -1,0 +1,23 @@
+---
+# For fluent-plugin-kakfa
+- hosts: server
+  roles:
+    - fluentd
+    - agent
+
+# Kafka and kafka-connect-fluentd
+- hosts: kafka
+  roles:
+    - kafka
+    - agent
+
+# fluent-benchmark-client
+- hosts: client
+  roles:
+    - client
+
+# Fluentd + docker-compose(influxdb + grafana)
+- hosts: metrics
+  roles:
+    - fluentd
+    - metrics
