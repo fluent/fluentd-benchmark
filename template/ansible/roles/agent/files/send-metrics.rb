@@ -2,6 +2,7 @@
 
 require "fluent-logger"
 require "optparse"
+require "open3"
 
 def main(argv)
   parser = OptionParser.new
@@ -44,8 +45,12 @@ end
 def run(host, port, pid, tag)
   logger = Fluent::Logger::FluentLogger.new(nil, host: host, port: port)
 
-  command = ["pidstat", "-h", "-p", pid, "-ur", "1"]
-  # command = ["pidstat", "-H", "-h", "-p", pid, "-ur", "1"]
+  help_string, _stat = Open3.capture2e("pidstat", "--help")
+  command = if help_string.include?("-H")
+              ["pidstat", "-h", "-p", pid, "-ur", "1"]
+            else
+              ["pidstat", "-H", "-h", "-p", pid, "-ur", "1"]
+            end
 
   IO.popen({ "LANG" => "C"}, command, "r+") do |io|
     io.close_write
