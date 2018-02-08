@@ -47,9 +47,9 @@ def run(host, port, pid, tag)
 
   help_string, _stat = Open3.capture2e("pidstat", "--help")
   command = if help_string.include?("-H")
-              ["pidstat", "-h", "-p", pid, "-ur", "1"]
-            else
               ["pidstat", "-H", "-h", "-p", pid, "-ur", "1"]
+            else
+              ["pidstat", "-h", "-p", pid, "-ur", "1"]
             end
 
   IO.popen({ "LANG" => "C"}, command, "r+") do |io|
