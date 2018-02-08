@@ -66,12 +66,16 @@
     - fluent-plugin-influxdb
 
 - name: Create td-agent.conf
+  tags:
+    - td-agent
   become: yes
   template:
     src: "td-agent.conf.{{ td_agent_target }}.j2"
     dest: /etc/td-agent/td-agent.conf
 
 - name: Restart td-agent
+  tags:
+    - td-agent
   become: yes
   service:
     name: td-agent
