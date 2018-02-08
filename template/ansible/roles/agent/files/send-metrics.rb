@@ -69,7 +69,7 @@ def run(host, port, pid, tag)
         elements = line.split(/\s+/, headers.size)
         record = headers.zip(elements).to_a.map do |key, value|
           case
-          when key == "CPU", key == "UID", key == "PID"
+          when %w[CPU UID PID].include?(key)
             [key, value]
           when /\A\d+\z/ =~ value
             [key, value.to_i]
