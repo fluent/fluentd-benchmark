@@ -86,7 +86,7 @@ def run(host, port, pid, tag)
           end
         end
         record = record.to_h
-        time = record["Time"]
+        time = record.delete("Time").to_i
         logger.post_with_time(tag, record, time)
       end
     end
