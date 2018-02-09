@@ -53,7 +53,7 @@ run_benchmark() {
     period=$3
     log "run benchmark ${host}:${port} ${n_events} events/sec ${period}"
     gcloud compute --project "fluentd-benchmark" ssh --zone "asia-northeast1-a" "client1" \
-           --command "nohup ./run-benchmark.sh ${host} ${port} ${n_events} ${period} &"
+           --command "./run-benchmark.sh ${host} ${port} ${n_events} ${period}"
 }
 
 kafka_connect() {
