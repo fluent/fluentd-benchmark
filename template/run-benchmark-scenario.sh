@@ -2,12 +2,12 @@
 
 start_kafka() {
     gcloud compute --project "fluentd-benchmark" ssh --zone "asia-northeast1-a" "kafka" \
-           --command "nohup ./run.sh &"
+           --command "cd ./kafka_2.11-1.0.0 && ./run.sh start"
 }
 
 stop_kafka() {
     gcloud compute --project "fluentd-benchmark" ssh --zone "asia-northeast1-a" "kafka" \
-           --command "nohup pkill -f java SIGKILL &"
+           --command "pkill -SIGKILL -f java"
 }
 
 start_sending_metrics() {
