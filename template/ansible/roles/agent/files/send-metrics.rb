@@ -10,6 +10,7 @@ def main(argv)
   port = 24224
   pid = nil
   tag = nil
+  daemon = false
   parser.on("--host=HOST", String, "Fluentd host") do |value|
     host = value
   end
@@ -21,6 +22,9 @@ def main(argv)
   end
   parser.on("--tag=TAG", String, "The tag") do |value|
     tag = value
+  end
+  parser.on("--daemon", "Daemonize") do
+    daemon = true
   end
 
   begin
@@ -39,6 +43,7 @@ def main(argv)
     puts "tag is required"
     exit(false)
   end
+  Process.daemon if daemon
   run(host, port, pid, tag)
 end
 
