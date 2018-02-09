@@ -111,6 +111,9 @@ out_kafka2() {
     done
 }
 
+stop_sending_metrics
+stop_kafka
+
 kafka_connect
 out_kafka
 out_kafka_buffered
