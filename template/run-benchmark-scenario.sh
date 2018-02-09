@@ -62,6 +62,7 @@ kafka_connect() {
         start_kafka
         start_sending_metrics
         run_benchmark kafka $n 5m
+        stop_sending_metrics
         stop_kafka
         sleep 60
     done
@@ -75,6 +76,7 @@ out_kafka() {
         start_kafka
         start_sending_metrics
         run_benchmark server $n 5m
+        stop_sending_metrics
         stop_kafka
         sleep 60
     done
@@ -88,6 +90,7 @@ out_kafka_buffered() {
         start_kafka
         start_sending_metrics
         run_benchmark server $n 5m
+        stop_sending_metrics
         stop_kafka
         sleep 60
     done
@@ -102,6 +105,7 @@ out_kafka2() {
         start_kafka
         start_sending_metrics
         run_benchmark server $n 5m
+        stop_sending_metrics
         stop_kafka
         sleep 60
     done
