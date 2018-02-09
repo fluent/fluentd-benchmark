@@ -22,17 +22,23 @@
     - openjdk-8-jre
 
 - name: Clone fluent-benchmark-client
+  tags:
+    - benchmark-client
   git:
     repo: https://github.com/okkez/fluent-benchmark-client.git
     dest: ~/fluent-benchmark-client
 
 - name: Build fluent-benchmark-client
+  tags:
+    - benchmark-client
   shell: |
     ./gradlew installDist
   args:
     chdir: ~/fluent-benchmark-client
 
 - name: Copy run-benchmark.sh
+  tags:
+    - benchmark-client
   copy:
     src: run-benchmark.sh
     dest: ~/
