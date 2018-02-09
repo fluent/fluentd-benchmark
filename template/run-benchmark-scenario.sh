@@ -22,12 +22,12 @@ start_sending_metrics() {
                  --command "pgrep -f FluentdSource")
     log "  kafka: pid=$pid"
     gcloud compute --project "fluentd-benchmark" ssh --zone "asia-northeast1-a" "kafka" \
-           --command "nohup ./send-metrics.rb --host metrics --port 24224 --pid ${pid} --tag kafka-connect-metrics &"
+           --command "./send-metrics.rb --host metrics --port 24224 --pid ${pid} --tag kafka-connect-metrics --daemon"
     pid=$(gcloud compute --project "fluentd-benchmark" ssh --zone "asia-northeast1-a" "server" \
                  --command "pgrep -f ascii-8bit")
     log "  server: pid=$pid"
     gcloud compute --project "fluentd-benchmark" ssh --zone "asia-northeast1-a" "server" \
-           --command "nohup ./send-metrics.rb --host metrics --port 24224 --pid ${pid} --tag fluentd-metrics &"
+           --command "./send-metrics.rb --host metrics --port 24224 --pid ${pid} --tag fluentd-metrics --daemon"
 }
 
 stop_sending_metrics() {
