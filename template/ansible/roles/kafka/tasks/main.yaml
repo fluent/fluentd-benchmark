@@ -59,8 +59,8 @@
     chdir: ~/kafka-connect-fluentd
 
 - name: Install FluentdSourceConnector.properties
-  copy:
-    src: FluentdSourceConnector.properties
+  template:
+    src: FluentdSourceConnector.properties.j2
     dest: "~/{{ kafka_base }}/config/FluentdSourceConnector.properties"
 
 - name: Install server.properties
