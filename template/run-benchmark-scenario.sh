@@ -52,7 +52,7 @@ prepare_server_kafka() {
     pushd ansible
     ansible-playbook -i hosts -l server -t td-agent \
                      -e "td_agent_target=kafka" \
-                     -e "kafka_max_buffer_size=${max_buffer_size}"
+                     -e "kafka_max_buffer_size=${max_buffer_size}" \
                      playbook.yaml
     popd
 }
@@ -63,7 +63,7 @@ prepare_server_kafka_buffered() {
     pushd ansible
     ansible-playbook -i hosts -l server -t td-agent \
                      -e "td_agent_target=kafka_buffered" \
-                     -e "kafka_agg_max_bytes=${kafka_agg_max_bytes}"
+                     -e "kafka_agg_max_bytes=${kafka_agg_max_bytes}" \
                      playbook.yaml
     popd
 }
@@ -109,7 +109,7 @@ kafka_connect() {
 out_kafka() {
     log "out_kafka"
     max_buffer_size=$1
-    prepare_server kafka $max_buffer_size
+    prepare_server_kafka $max_buffer_size
     for n in 1000 10000 50000 100000; do
         start_kafka
         start_sending_metrics
