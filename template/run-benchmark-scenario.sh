@@ -168,7 +168,6 @@ kafka_connect 4
 
 out_kafka 1000 # default
 out_kafka 10000
-out_kafka 20000
 out_kafka 50000
 
 out_kafka_buffered 4k # default
