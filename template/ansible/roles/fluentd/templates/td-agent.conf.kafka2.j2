@@ -11,6 +11,8 @@
   required_acks -1
   <buffer>
     @type memory
+    chunk_limit_size 8m
+    total_limit_size 512m
     flush_interval 1s
     flush_thread_count 3
   </buffer>
