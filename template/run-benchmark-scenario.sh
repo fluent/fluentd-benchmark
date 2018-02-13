@@ -94,10 +94,10 @@ kafka_connect() {
         prepare_kafka $n_workers
         start_kafka
         start_sending_metrics
-        log "start kafka connect $n" | tee -a benchmark.log
+        log "start kafka connect worker=${n_workers} $n" | tee -a benchmark.log
         run_benchmark kafka $n 5m
         sleep 60
-        log "end kafka connect $n" | tee -a benchmark.log
+        log "end kafka connect worker=${n_workers} $n" | tee -a benchmark.log
         stop_sending_metrics
         stop_kafka
         sleep 60
@@ -112,10 +112,10 @@ out_kafka() {
     for n in 1000 10000 50000 100000; do
         start_kafka
         start_sending_metrics
-        log "start out_kafka $n" | tee -a benchmark.log
+        log "start out_kafka max_buffer_size=${max_buffer_size} $n" | tee -a benchmark.log
         run_benchmark server $n 5m
         sleep 60
-        log "end out_kafka $n" | tee -a benchmark.log
+        log "end out_kafka max_buffer_size=${max_buffer_size} $n" | tee -a benchmark.log
         stop_sending_metrics
         stop_kafka
         sleep 60
@@ -130,10 +130,10 @@ out_kafka_buffered() {
     for n in 1000 10000 50000 100000 200000 300000; do
         start_kafka
         start_sending_metrics
-        log "start out_kafka_buffered $n" | tee -a benchmark.log
+        log "start out_kafka_buffered kafka_agg_max_bytes=${kafka_agg_max_bytes} $n" | tee -a benchmark.log
         run_benchmark server $n 5m
         sleep 60
-        log "end out_kafka_buffered $n" | tee -a benchmark.log
+        log "end out_kafka_buffered kafka_agg_max_bytes=${kafka_agg_max_bytes} $n" | tee -a benchmark.log
         stop_sending_metrics
         stop_kafka
         sleep 60
