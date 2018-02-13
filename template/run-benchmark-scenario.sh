@@ -38,6 +38,14 @@ stop_sending_metrics() {
            --command "pkill -f send-metrics.rb"
 }
 
+prepare_kafka() {
+    log "prepare kafka"
+    n_workers=$1
+    pushd ansible
+    ansible-playbook -i hosts -l kafka -t properties -e "fluentd_worker_pool_size=${n_workers}" playbook.yaml
+    popd
+}
+
 prepare_server() {
     log "prepare server"
     target=$1
@@ -57,8 +65,10 @@ run_benchmark() {
 }
 
 kafka_connect() {
-    log "kafka connect"
+    n_workers=$1
+    log "kafka connect worker=${n_workers}"
     for n in 1000 10000 50000 100000 200000 300000; do
+        prepare_kafka $n_workers
         start_kafka
         start_sending_metrics
         log "start kafka connect $n" | tee -a benchmark.log
@@ -126,7 +136,9 @@ out_kafka2() {
 stop_sending_metrics
 stop_kafka
 
-kafka_connect
+kafka_connect 1
+kafka_connect 2
+kafka_connect 4
 out_kafka
 out_kafka_buffered
 out_kafka2
