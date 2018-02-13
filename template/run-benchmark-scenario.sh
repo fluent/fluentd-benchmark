@@ -70,7 +70,6 @@ prepare_server_kafka_buffered() {
 
 prepare_server_kafka2() {
     log "prepare_server_kafka"
-    target=$1
     pushd ansible
     ansible-playbook -i hosts -l server -t td-agent \
                      -e "td_agent_target=kafka2" \
