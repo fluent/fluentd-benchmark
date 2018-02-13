@@ -9,4 +9,12 @@
   brokers kafka:9092
   zookeeper kafka:2181
   default_topic benchmark.data
+  kafka_agg_max_bytes {{ kafka_agg_max_bytes }}
+  <buffer>
+    @type memory
+    chunk_limit_size 8m
+    total_limit_size 512m
+    flush_mode interval
+    flush_interval 1s
+  </buffer>
 </match>

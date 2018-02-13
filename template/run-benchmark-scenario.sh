@@ -46,11 +46,35 @@ prepare_kafka() {
     popd
 }
 
-prepare_server() {
-    log "prepare server"
+prepare_server_kafka() {
+    log "prepare_server_kafka"
+    max_buffer_size=$1
+    pushd ansible
+    ansible-playbook -i hosts -l server -t td-agent \
+                     -e "td_agent_target=kafka" \
+                     -e "kafka_max_buffer_size=${max_buffer_size}"
+                     playbook.yaml
+    popd
+}
+
+prepare_server_kafka_buffered() {
+    log "prepare_server_kafka"
+    kafka_agg_max_bytes=$1
+    pushd ansible
+    ansible-playbook -i hosts -l server -t td-agent \
+                     -e "td_agent_target=kafka_buffered" \
+                     -e "kafka_agg_max_bytes=${kafka_agg_max_bytes}"
+                     playbook.yaml
+    popd
+}
+
+prepare_server_kafka2() {
+    log "prepare_server_kafka"
     target=$1
     pushd ansible
-    ansible-playbook -i hosts -l server -t td-agent -e "td_agent_target=${target}" playbook.yaml
+    ansible-playbook -i hosts -l server -t td-agent \
+                     -e "td_agent_target=kafka2" \
+                     playbook.yaml
     popd
 }
 
@@ -84,7 +108,8 @@ kafka_connect() {
 # NOTE: buffer overflow when 100000
 out_kafka() {
     log "out_kafka"
-    prepare_server kafka
+    max_buffer_size=$1
+    prepare_server kafka $max_buffer_size
     for n in 1000 10000 50000 100000; do
         start_kafka
         start_sending_metrics
@@ -101,7 +126,8 @@ out_kafka() {
 # NOTE: buffer overflow when 300000
 out_kafka_buffered() {
     log "out_kafka_buffered"
-    prepare_server kafka_buffered
+    kafka_agg_max_bytes=$1
+    prepare_server_kafka_buffered $kafka_agg_max_bytes
     for n in 1000 10000 50000 100000 200000 300000; do
         start_kafka
         start_sending_metrics
@@ -119,7 +145,7 @@ out_kafka_buffered() {
 # NOTE: buffer overflow when 300000
 out_kafka2() {
     log "out_kafka2"
-    prepare_server kafka2
+    prepare_server_kafka2
     for n in 1000 10000 50000 100000 200000 300000; do
         start_kafka
         start_sending_metrics
@@ -136,10 +162,18 @@ out_kafka2() {
 stop_sending_metrics
 stop_kafka
 
-kafka_connect 1
+kafka_connect 1 # default
 kafka_connect 2
 kafka_connect 4
-out_kafka
-out_kafka_buffered
+
+out_kafka 1000 # default
+out_kafka 10000
+out_kafka 20000
+out_kafka 50000
+
+out_kafka_buffered 4k # default
+out_kafka_buffered 100k
+out_kafka_buffered 1m
+
 out_kafka2
 
