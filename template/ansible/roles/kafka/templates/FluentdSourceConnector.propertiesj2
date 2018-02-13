@@ -8,7 +8,7 @@ fluentd.bind=0.0.0.0
 # fluentd.keystore.password=password
 # fluentd.key.password=password
 
-fluentd.worker.pool.size=1
+fluentd.worker.pool.size={{ fluentd_worker_pool_size }}
 fluentd.counter.enabled=true
 #fluentd.schemas.enable=false
 

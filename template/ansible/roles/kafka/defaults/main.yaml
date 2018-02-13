@@ -2,3 +2,4 @@
 kafka_version: 1.0.0
 scala_version: 2.11
 kafka_base: "kafka_{{ scala_version }}-{{ kafka_version }}"
+fluentd_worker_pool_size: 1
