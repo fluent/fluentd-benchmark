@@ -49,10 +49,12 @@ prepare_kafka() {
 prepare_server_kafka() {
     log "prepare_server_kafka"
     max_buffer_size=$1
+    n_workers=$2
     pushd ansible
     ansible-playbook -i hosts -l server -t td-agent \
                      -e "td_agent_target=kafka" \
                      -e "kafka_max_buffer_size=${max_buffer_size}" \
+                     -e "fluentd_workers=${n_workers}" \
                      playbook.yaml
     popd
 }
@@ -64,6 +66,7 @@ prepare_server_kafka_buffered() {
     ansible-playbook -i hosts -l server -t td-agent \
                      -e "td_agent_target=kafka_buffered" \
                      -e "kafka_agg_max_bytes=${kafka_agg_max_bytes}" \
+                     -e "fluentd_workers=${n_workers}" \
                      playbook.yaml
     popd
 }
@@ -73,6 +76,7 @@ prepare_server_kafka2() {
     pushd ansible
     ansible-playbook -i hosts -l server -t td-agent \
                      -e "td_agent_target=kafka2" \
+                     -e "fluentd_workers=${n_workers}" \
                      playbook.yaml
     popd
 }
@@ -108,14 +112,15 @@ kafka_connect() {
 out_kafka() {
     log "out_kafka"
     max_buffer_size=$1
-    prepare_server_kafka $max_buffer_size
+    n_workers=$2
+    prepare_server_kafka $max_buffer_size $n_workers
     for n in 1000 10000 50000 100000; do
         start_kafka
         start_sending_metrics
-        log "start out_kafka max_buffer_size=${max_buffer_size} $n" | tee -a benchmark.log
+        log "start out_kafka max_buffer_size=${max_buffer_size} worker=${n_workers} $n" | tee -a benchmark.log
         run_benchmark server $n 5m
         sleep 60
-        log "end out_kafka max_buffer_size=${max_buffer_size} $n" | tee -a benchmark.log
+        log "end out_kafka max_buffer_size=${max_buffer_size} worker=${n_workers} $n" | tee -a benchmark.log
         stop_sending_metrics
         stop_kafka
         sleep 60
@@ -126,14 +131,15 @@ out_kafka() {
 out_kafka_buffered() {
     log "out_kafka_buffered"
     kafka_agg_max_bytes=$1
-    prepare_server_kafka_buffered $kafka_agg_max_bytes
+    n_workers=$2
+    prepare_server_kafka_buffered $kafka_agg_max_bytes $n_workers
     for n in 1000 10000 50000 100000 200000 300000; do
         start_kafka
         start_sending_metrics
-        log "start out_kafka_buffered kafka_agg_max_bytes=${kafka_agg_max_bytes} $n" | tee -a benchmark.log
+        log "start out_kafka_buffered kafka_agg_max_bytes=${kafka_agg_max_bytes} worker=${n_workers} $n" | tee -a benchmark.log
         run_benchmark server $n 5m
         sleep 60
-        log "end out_kafka_buffered kafka_agg_max_bytes=${kafka_agg_max_bytes} $n" | tee -a benchmark.log
+        log "end out_kafka_buffered kafka_agg_max_bytes=${kafka_agg_max_bytes} worker=${n_workers} $n" | tee -a benchmark.log
         stop_sending_metrics
         stop_kafka
         sleep 60
@@ -144,14 +150,15 @@ out_kafka_buffered() {
 # NOTE: buffer overflow when 300000
 out_kafka2() {
     log "out_kafka2"
-    prepare_server_kafka2
+    n_workers=$1
+    prepare_server_kafka2 $n_workers
     for n in 1000 10000 50000 100000 200000 300000; do
         start_kafka
         start_sending_metrics
-        log "start out_kafka2 $n" | tee -a benchmark.log
+        log "start out_kafka2 worker=${n_workers} $n" | tee -a benchmark.log
         run_benchmark server $n 5m
         sleep 60
-        log "end out_kafka2 $n" | tee -a benchmark.log
+        log "end out_kafka2 worker=${n_workers} $n" | tee -a benchmark.log
         stop_sending_metrics
         stop_kafka
         sleep 60
@@ -165,13 +172,17 @@ kafka_connect 1 # default
 kafka_connect 2
 kafka_connect 4
 
-out_kafka 1000 # default
-out_kafka 10000
-out_kafka 50000
+out_kafka 1000 1 # default
+# out_kafka 10000 2
+# out_kafka 10000 4
+# out_kafka 50000 1
 
-out_kafka_buffered 4k # default
-out_kafka_buffered 100k
-out_kafka_buffered 1m
+out_kafka_buffered 4k 1 # default
+# out_kafka_buffered 100k 2
+# out_kafka_buffered 100k 4
+# out_kafka_buffered 1m 1
 
-out_kafka2
+out_kafka2 1
+# out_kafka2 2
+# out_kafka2 4
 

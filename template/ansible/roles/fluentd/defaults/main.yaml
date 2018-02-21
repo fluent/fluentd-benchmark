@@ -1,6 +1,8 @@
 ---
 td_agent_version: 3.1.1
 
+fluentd_workers: 1
+
 # out_kafka
 kafka_max_buffer_size: 1000
 
