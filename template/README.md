@@ -63,50 +63,13 @@ metrics $ docker-compose exec influxdb influx -execute 'create database "kafka-c
 metrics $ docker-compose exec influxdb influx -execute 'show databases'
 ```
 
-TODO: Add grafana configuration
-
-Run Kafka and kafka-connect-fluentd (FluentdSource).
+## Run benchmark scenarios
 
 ```
-$ gcloud compute --project "fluentd-benchmark" ssh --zone "asia-northeast1-a" "kafka" \
-  --command "cd ~/kafka_2.11-1.0.0 && ./run.sh start"
+$ ./run-benchmark-scenario.sh
 ```
 
-Stop Kafka and kafka-connect-fluentd (FluentdSource).
-
-```
-$ gcloud compute --project "fluentd-benchmark" ssh --zone "asia-northeast1-a" "kafka" \
-  --command "cd ~/kafka_2.11-1.0.0 && ./run.sh stop"
-```
-
-## Send metrics
-
-Run send-metrics.rb before run benchmark.
-
-```
-$ gcloud compute --project "fluentd-benchmark" ssh --zone "asia-northeast1-a" "kafka" \
-  --command "./send-metrics.rb --host metrics --port 24224 --pid PID --tag kafka-connect-metrics"
-$ gcloud compute --project "fluentd-benchmark" ssh --zone "asia-northeast1-a" "server" \
-  --command "./send-metrics.rb --host metrics --port 24224 --pid PID --tag fluentd-metrics"
-```
-
-These command send metrics (CPU usage, memory usage, etc.) to metrics server.
-
-## Run benchmark
-
-For out_kafka, out_kafka_buffered or out_kafka2:
-
-```
-$ gcloud compute --project "fluentd-benchmark" ssh --zone "asia-northeast1-a" "client1" \
-  --command './run-benchmark.sh server 24224'
-```
-
-For kafka-connect-fluentd (FluentdSource):
-
-```
-$ gcloud compute --project "fluentd-benchmark" ssh --zone "asia-northeast1-a" "client1" \
-  --command './run-benchmark.sh kafka 24224'
-```
+Edit and run the script.
 
 ## Benchmark result
 
@@ -117,5 +80,5 @@ $ gcloud compute --project "fluentd-benchmark" ssh --zone "asia-northeast1-a" "m
   -- -L 3000:localhost:3000
 ```
 
-Access http://localhost:3001 using web browser and login admin/admin.
+Access http://localhost:3000 using web browser and login admin/admin.
 
