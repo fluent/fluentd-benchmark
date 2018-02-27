@@ -1,0 +1,22 @@
+<source>
+  @type forward
+  port 24224
+  bind 0.0.0.0
+</source>
+
+<match benchmark.data>
+  @type kafka2
+  default_topic benchmark.data
+  brokers kafka:9092
+  required_acks -1
+  <buffer>
+    @type memory
+    chunk_limit_size 8m
+    total_limit_size 512m
+    flush_interval 1s
+    flush_thread_count 3
+  </buffer>
+  <format>
+    @type json
+  </format>
+</match>

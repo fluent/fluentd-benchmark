@@ -1,0 +1,7 @@
+/ansible/hosts
+/ansible/playbook.retry
+/terraform.tfstate
+/terraform.tfstate.backup
+/credential.json
+/*.log
+/.vagrant/

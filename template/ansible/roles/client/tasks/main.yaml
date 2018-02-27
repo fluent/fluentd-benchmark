@@ -1,0 +1,45 @@
+---
+- name: Update APT mirror
+  become: yes
+  lineinfile:
+    path: /etc/apt/sources.list
+    regexp: '(deb(?:-src)? http://)deb\.debian\.org/debian/? stretch main'
+    line: '\1ftp.jp.debian.org/debian stretch main'
+    backrefs: yes
+
+- name: Install packages
+  become: yes
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+  with_items:
+    - apt-transport-https
+    - build-essential
+    - gzip
+    - unzip
+    - git
+    - openjdk-8-jdk
+    - openjdk-8-jre
+
+- name: Clone fluent-benchmark-client
+  tags:
+    - benchmark-client
+  git:
+    repo: https://github.com/okkez/fluent-benchmark-client.git
+    dest: ~/fluent-benchmark-client
+
+- name: Build fluent-benchmark-client
+  tags:
+    - benchmark-client
+  shell: |
+    ./gradlew installDist
+  args:
+    chdir: ~/fluent-benchmark-client
+
+- name: Copy run-benchmark.sh
+  tags:
+    - benchmark-client
+  copy:
+    src: run-benchmark.sh
+    dest: ~/
+    mode: 0755

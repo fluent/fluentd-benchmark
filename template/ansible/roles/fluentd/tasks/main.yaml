@@ -1,0 +1,83 @@
+- name: Update APT mirror
+  become: yes
+  lineinfile:
+    path: /etc/apt/sources.list
+    regexp: '(deb(?:-src)? http://)deb\.debian\.org/debian/? stretch main'
+    line: '\1ftp.jp.debian.org/debian stretch main'
+    backrefs: yes
+
+- name: Install packages
+  become: yes
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+  with_items:
+    - apt-transport-https
+    - build-essential
+    - gzip
+    - pxz
+    - vim
+    - git
+    - ruby
+    - ruby-dev
+
+- name: Install Bundler
+  become: yes
+  gem:
+    name: bundler
+    user_install: no
+
+- name: Install gems
+  become: yes
+  gem:
+    name: "{{ item }}"
+    user_install: no
+  with_items:
+    - fluent-logger
+
+- name: Add locale ja_JP.UTF-8
+  become: yes
+  shell: |
+    sed -i -e 's/^# ja_JP\.UTF-8/ja_JP.UTF-8/' /etc/locale.gen
+    locale-gen
+    update-locale LANG=ja_JP.UTF-8
+
+- name: Install td-agent key
+  become: yes
+  apt_key:
+    url: http://packages.treasuredata.com.s3.amazonaws.com/GPG-KEY-td-agent
+    state: present
+
+- name: Install td-agent
+  become: yes
+  apt:
+    deb: "http://packages.treasuredata.com.s3.amazonaws.com/3/debian/stretch/pool/contrib/t/td-agent/td-agent_{{ td_agent_version }}-0_amd64.deb"
+
+- name: Install fluent plugins
+  become: yes
+  gem:
+    executable: /usr/sbin/td-agent-gem
+    name: "{{ item }}"
+    state: present
+    user_install: no
+  with_items:
+    - fluent-plugin-kafka
+    - zookeeper
+    - fluent-plugin-influxdb
+
+- name: Create td-agent.conf
+  tags:
+    - td-agent
+  become: yes
+  template:
+    src: "td-agent.conf.{{ td_agent_target }}.j2"
+    dest: /etc/td-agent/td-agent.conf
+
+- name: Restart td-agent
+  tags:
+    - td-agent
+  become: yes
+  service:
+    name: td-agent
+    enabled: yes
+    state: restarted

@@ -1,0 +1,73 @@
+---
+- name: Update APT mirror
+  become: yes
+  lineinfile:
+    path: /etc/apt/sources.list
+    regexp: '(deb(?:-src)? http://)deb\.debian\.org/debian/? stretch main'
+    line: '\1ftp.jp.debian.org/debian stretch main'
+    backrefs: yes
+
+- name: Install packages
+  become: yes
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+  with_items:
+    - ca-certificates
+    - curl
+    - software-properties-common
+
+- name: Install docker key
+  become: yes
+  apt_key:
+    url: https://download.docker.com/linux/debian/gpg
+
+- name: Add APT repository for Docker
+  become: yes
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/debian stretch stable
+    state: present
+
+- name: Install docker
+  become: yes
+  apt:
+    name: docker-ce
+    update_cache: yes
+
+- name: Add user to docker group
+  become: yes
+  user:
+    name: "{{ ansible_env.USER }}"
+    group: docker
+    append: yes
+
+- name: Install docker-compose
+  become: yes
+  get_url:
+    url: "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64"
+    dest: /usr/local/bin/docker-compose
+    mode: 0755
+
+- name: Restart docker
+  become: yes
+  service:
+    name: docker
+    enabled: yes
+    state: restarted
+
+- name: Copy docker-compose.yaml
+  copy:
+    src: docker-compose.yaml
+    dest: ~/docker-compose.yaml
+    mode: 0644
+
+# NOTE: Following tasks does not work properly at first time
+# - name: Run docker-compose
+#   command: docker-compose up -d
+
+# - name: Create influxdb database
+#   shell: |
+#     docker-compose exec influxdb influx -execute 'show databases' | grep -q kafka-metrics || \
+#     docker-compose exec influxdb influx -execute 'create database "kafka-metrics"'
+
+# NOTE: Add dashboards to grafana by hand or import dashboards configuration

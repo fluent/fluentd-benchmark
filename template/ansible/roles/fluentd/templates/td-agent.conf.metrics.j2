@@ -1,0 +1,61 @@
+<source>
+  @type forward
+  port 24224
+</source>
+
+<match kafka-metrics.kafka.{server.BrokerTopicMetrics,network.RequestMetrics}>
+  @type copy
+  <store>
+    @type influxdb
+    host localhost
+    port 8086
+    dbname kafka-metrics
+    #measurement
+    user root
+    password root
+    auto_tags true
+    #tag_keys Name,MBeanName,Group,Scope,Type
+  </store>
+  <store>
+    @type file
+    append true
+    compress gzip
+    path /tmp/kafka-metrics/${tag}
+    <buffer tag>
+      @type memory
+    </buffer>
+  </store>
+</match>
+
+<match kafka-metrics.**>
+  @type copy
+  <store>
+    @type file
+    append true
+    compress gzip
+    path /tmp/kafka-metrics/${tag}
+    <buffer tag>
+      @type memory
+    </buffer>
+  </store>
+</match>
+
+<match fluentd-metrics>
+  @type influxdb
+  host localhost
+  port 8086
+  dbname fluentd
+  user root
+  password root
+  auto_tags true
+</match>
+
+<match kafka-connect-metrics>
+  @type influxdb
+  host localhost
+  port 8086
+  dbname kafka-connect
+  user root
+  password root
+  auto_tags true
+</match>
