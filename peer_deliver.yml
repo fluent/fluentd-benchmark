@@ -1,0 +1,41 @@
+version: '3'
+services:
+  receiver:
+    image: ruby:latest
+    command: >
+      bash -c "[ -d fluentd-benchmark ] || git clone https://github.com/fluent/fluentd-benchmark &&
+      cd fluentd-benchmark/peer_deliver && bundle &&
+      bundle exec fluentd -c receiver.conf || true &
+      echo Waiting for receiver to come up ... &&
+      while ! test -f fluentd-benchmark/peer_deliver/receiver.log ; do sleep 0.1 ; done ;
+      echo Trailing logfile ... &&
+      tail -f fluentd-benchmark/peer_deliver/receiver.log"
+  deliver:
+    image: ruby:latest
+    command: >
+      bash -c "[ -d fluentd-benchmark ] || git clone https://github.com/fluent/fluentd-benchmark &&
+      cd fluentd-benchmark/peer_deliver && bundle &&
+      sed -e 's/host 127.0.0.1/host receiver/' -i *deliver.conf &&
+      apt-get update && apt-get install -y netcat &&
+      echo Waiting for receiver to come up ... &&
+      while ! nc -z receiver 22000 ; do sleep 0.1 ; done ;
+      sleep 1 &&
+      bundle exec fluentd -c deliver.conf || true &
+      echo Waiting for deliver to come up ... &&
+      while ! nc -z deliver 20000 ; do sleep 0.1 ; done ;
+      sleep 300"
+  agent:
+    image: ruby:latest
+    command: >
+      bash -c "[ -d fluentd-benchmark ] || git clone https://github.com/fluent/fluentd-benchmark &&
+      cd fluentd-benchmark/peer_deliver && bundle &&
+      sed -e 's/host 127.0.0.1/host deliver/' -i multi_thread_agent.conf &&
+      apt-get update && apt-get install -y netcat &&
+      echo Waiting for deliver to come up ... &&
+      while ! nc -z deliver 20000 ; do sleep 0.1 ; done ;
+      sleep 1 &&
+      bundle exec fluentd -c agent.conf || true &
+      echo Waiting for agent to come up ... &&
+      while ! test -f /var/tmp/_var_log_dummy.pos ; do sleep 0.1 ; done ;
+      echo Starting pushing logs .. &&
+      bundle exec dummer -c dummer.conf -r 1000000 || true"
