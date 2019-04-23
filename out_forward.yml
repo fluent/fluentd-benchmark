@@ -1,0 +1,23 @@
+version: '3'
+services:
+  receiver:
+    image: ruby:latest
+    command: >
+      bash -c "[ -d fluentd-benchmark ] || git clone https://github.com/fluent/fluentd-benchmark &&
+      cd fluentd-benchmark/out_forward && bundle &&
+      bundle exec fluentd -c receiver.conf"
+  agent:
+    image: ruby:latest
+    command: >
+      bash -c "[ -d fluentd-benchmark ] || git clone https://github.com/fluent/fluentd-benchmark &&
+      cd fluentd-benchmark/out_forward && bundle &&
+      sed -e 's/host 127.0.0.1/host receiver/' -i agent.conf &&
+      apt-get update && apt-get install -y netcat &&
+      echo Waiting for receiver to come up ... &&
+      while ! nc -z receiver 20000 ; do sleep 0.1 ; done ;
+      sleep 1 &&
+      bundle exec fluentd -c agent.conf || true &
+      echo Waiting for agent to come up ... &&
+      while ! test -f /var/tmp/_var_log_dummy.pos ; do sleep 0.1 ; done ;
+      echo Starting pushing logs .. &&
+      bundle exec dummer -c dummer.conf -r 1000000 || true"
