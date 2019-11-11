@@ -2,7 +2,7 @@
 
 SED="sed"
 HEAD="head"
-DURATION=120
+: ${DURATION:=120}
 
 [ "$(uname -s)" == "Darwin" ] && SED=gsed
 [ "$(uname -s)" == "Darwin" ] && HEAD=ghead
