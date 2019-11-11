@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 SED="sed"
 HEAD="head"
 DURATION=120
